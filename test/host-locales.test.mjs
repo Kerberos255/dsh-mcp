@@ -32,7 +32,7 @@ test("hostLocale resolves the DSH locale preference", () => {
 
 test("hostText renders the localized copy for the current locale", () => {
 	assert.match(hostText(zhCtx, "toolSearchDesc"), /按关键词查找/);
-	assert.match(hostText(enCtx, "toolSearchDesc"), /Find enabled MCP tools/);
+	assert.match(hostText(enCtx, "toolSearchDesc"), /Find MCP tools by keyword/);
 	assert.match(hostText(bareCtx, "toolSearchDesc"), /按关键词查找/, "unresolvable locale keeps zh");
 });
 
