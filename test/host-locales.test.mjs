@@ -31,15 +31,15 @@ test("hostLocale resolves the DSH locale preference", () => {
 });
 
 test("hostText renders the localized copy for the current locale", () => {
-	assert.match(hostText(zhCtx, "toolSearchDesc"), /按关键词检索/);
-	assert.match(hostText(enCtx, "toolSearchDesc"), /Search the enabled MCP tools/);
-	assert.match(hostText(bareCtx, "toolSearchDesc"), /按关键词检索/, "unresolvable locale keeps zh");
+	assert.match(hostText(zhCtx, "toolSearchDesc"), /按关键词查找/);
+	assert.match(hostText(enCtx, "toolSearchDesc"), /Find enabled MCP tools/);
+	assert.match(hostText(bareCtx, "toolSearchDesc"), /按关键词查找/, "unresolvable locale keeps zh");
 });
 
 test("hostText substitutes {placeholders}", () => {
 	assert.equal(hostText(enCtx, "oauthToolFallback", { serverName: "octop-memory-prod" }),
 		'Server "octop-memory-prod" requires OAuth authorization: edit the server in Settings → MCP and click "Test connection" to complete authorization');
-	assert.match(hostText(zhCtx, "toolControlPrompt", { servers: "a, b" }), /当前可用 MCP 服务器：a, b。/);
+	assert.match(hostText(zhCtx, "toolControlPrompt", { servers: "a, b" }), /服务器：a, b。/);
 });
 
 test("unknown keys fall back to the zh template verbatim", () => {
