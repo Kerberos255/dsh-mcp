@@ -1,7 +1,14 @@
 {
   "name": "dsh-mcp",
-  "version": "1.14.0",
-  "description": "MCP 管理界面 + tool search：可视化配置/启停/刷新 MCP 服务器与工具勾选，按需检索（tool search）热注入；工具列表稳定命中缓存、不撑爆上下文。DeepSeek Harness plugin: MCP management UI + tool search — stable tool list, cache-friendly, no context bloat.",
+  "version": "1.14.0-dsh.6",
+  "engines": {
+    "dsh": ">=0.2.0-rc.2"
+  },
+  "dshCompatibility": {
+    "testedRuntime": "0.2.1-rc.2",
+    "policy": "warn"
+  },
+  "description": "MCP 连接与工具管理：工具开关跨重启持久保存",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
@@ -34,22 +41,24 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ArvinQi/dsh-mcp.git"
+    "url": "git+https://github.com/Kerberos255/dsh-mcp.git"
   },
-  "homepage": "https://github.com/ArvinQi/dsh-mcp",
+  "homepage": "https://github.com/Kerberos255/dsh-mcp",
   "bugs": {
-    "url": "https://github.com/ArvinQi/dsh-mcp/issues"
+    "url": "https://github.com/Kerberos255/dsh-mcp/issues"
   },
   "dsh": {
-    "supported": "0.2.0-rc.2",
+    "supported": "0.2.1-rc.2",
     "bundle": {
       "patch": "./cordis.patch.yml"
     },
     "client": {
       "inject": [
         "@deepseek-ai/dsh-api-remotes",
-        "@deepseek-ai/dsh-client-ui-settings",
-        "@deepseek-ai/dsh-client-locale"
+        "@deepseek-ai/dsh-client-ui-slots",
+        "@deepseek-ai/dsh-client-store",
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-plugin-manager"
       ],
       "platform": "web"
     }

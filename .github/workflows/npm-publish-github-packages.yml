@@ -36,6 +36,8 @@ jobs:
       - run: node --check scripts/build.mjs
 
   publish-gpr:
+    # The upstream @arvinqi package scope does not belong to this fork.
+    if: github.repository == 'ArvinQi/dsh-mcp'
     needs: check
     runs-on: ubuntu-latest
     permissions:

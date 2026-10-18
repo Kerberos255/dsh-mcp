@@ -36,9 +36,9 @@ export interface McpManagerInjected extends McpServerFormRemote, McpToolControlR
   release: (serverName: string) => Promise<McpTakeoverOutcome>
 }
 
-/** Full component props assembled by the Settings slot renderer. */
+/** MCP configuration props assembled by the plugin-detail slot renderer. */
 export type McpSettingsSectionProps =
-  PropsRuntime<'settings.section'>
+  PropsRuntime<'plugins.bundle.config'>
   & PropsLocale<'settings.mcp'>
   & PropsStore<ReturnType<typeof createMcpManagerStore>>
   & InjectFace<McpManagerInjected>
@@ -96,7 +96,7 @@ export function McpSettingsSection(props: McpSettingsSectionProps): ReactNode {
   const [expanded, setExpanded] = useState<ReadonlySet<string>>(new Set())
   const [refreshing, setRefreshing] = useState<ReadonlySet<string>>(new Set())
   const [jsonOpen, setJsonOpen] = useState(false)
-  const [envOpen, setEnvOpen] = useState(true)
+  const [envOpen, setEnvOpen] = useState(false)
   const [adopting, setAdopting] = useState<ReadonlySet<string>>(new Set())
   const [oauthWaiting, setOauthWaiting] = useState<ReadonlySet<string>>(new Set())
   const [oauthStarting, setOauthStarting] = useState<ReadonlySet<string>>(new Set())

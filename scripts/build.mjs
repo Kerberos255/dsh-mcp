@@ -129,7 +129,10 @@ await esbuild.build({
   // The plugin lives outside any node_modules tree of its own; the DSH
   // profiles fallback directory is where zod (inlined into the bundle) and the
   // external @deepseek-ai/* platform modules resolve from at build time.
-  nodePaths: [join(homedir(), '.dsh/profiles/node_modules')],
+  nodePaths: [
+    join(process.env.DSH_HOME || join(homedir(), '.dsh'), 'profiles', process.env.DSH_PROFILE || 'desktop', 'node_modules'),
+    join(homedir(), '.dsh/profiles/node_modules'),
+  ],
   plugins: [cssModuleLoader()],
   define: {
     'process.env.NODE_ENV': '"production"',

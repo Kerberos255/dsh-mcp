@@ -21,6 +21,8 @@ jobs:
       - run: node --check scripts/build.mjs
 
   publish-npm:
+    # Upstream owns the unscoped npm package. A fork release must not publish it.
+    if: github.repository == 'ArvinQi/dsh-mcp'
     needs: check
     runs-on: ubuntu-latest
     # Job-level env so actions/setup-node writes the auth token into .npmrc

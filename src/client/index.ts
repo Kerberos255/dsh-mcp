@@ -1,12 +1,13 @@
 /**
- * MCP server management settings page, browser half: one `settings.section`
- * entry named `mcp` over the `mcpManager` Remote namespace.
+ * MCP server management, browser half: a `plugins.bundle.config` form
+ * under the dsh-mcp plugin detail, backed by the `mcpManager` Remote.
  */
 
 // Type-only: pulls the locale plugin's Context merge (ctx.locale).
+import { createElement } from 'react'
 import type {} from '@deepseek-ai/dsh-client-locale/client'
-// Type-only: the settings shell's SlotMap merge (the 'settings.section' entry).
-import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
+// The same bundle configuration slot used by DSH's other plugins.
+import type {} from '@deepseek-ai/dsh-client-ui-plugin-manager/client'
 import type { ClientContext } from '@deepseek-ai/dsh-client-runtime/client'
 // Local wire vocabulary (vendored from the original mcp-manager types).
 import type { McpManagerFailure, McpServerId, McpServerView } from './types.ts'
@@ -222,13 +223,26 @@ export async function apply(ctx: Context): Promise<void> {
     },
   })
 
-  ctx.slots.inject('settings.section', () => ctx.slots.register({
-    name: 'settings.section',
-    id: 'mcp',
-    order: 25,
-    label: () => t('nav'),
+  // Show the complete MCP manager in the plugin detail, like other DSH plugins.
+  ctx.slots.inject('plugins.bundle.config', () => ctx.slots.register({
+    name: 'plugins.bundle.config',
+    key: 'dsh-mcp',
     locale: NS,
     store: createMcpManagerStore,
     inject: injected,
-  }, McpSettingsSection))
+  }, ({ view, ...props }) => view === 'summary'
+    ? '管理 MCP 连接、授权和工具；直接在插件详情中配置。'
+    : createElement(McpSettingsSection, props)))
+
+  // Hide the extra component toggle only if it is the sole healthy component.
+  ctx.effect(() => {
+    if (typeof document === 'undefined') return
+    const style = document.createElement('style')
+    style.dataset.pluginConfig = 'dsh-mcp'
+    style.textContent = `
+      [data-plugin-detail="dsh-mcp"] [data-plugin-rows]:has(>ul>[data-plugin-row]:only-child):not(:has([data-state=failed],[data-state=off])){display:none}
+    `
+    document.head.appendChild(style)
+    return () => style.remove()
+  }, 'dsh-mcp: plugin detail layout')
 }

@@ -2,9 +2,9 @@
 
 **[English](README.en.md) | 简体中文**
 
-[![dshfind](https://dshfind.com/api/badge/ArvinQi/dsh-mcp?lang=zh)](https://dshfind.com/zh/plugins/ArvinQi/dsh-mcp?ref=badge)
+> 本仓库是 <https://github.com/ArvinQi/dsh-mcp> 的 fork，保留上游 MIT 授权与作者署名。本分支维护 DSH 插件详情入口、中文 MCP 工具发现、按 Session 隔离的按需注入、工具禁用持久化等改进。
 
-> **支持版本**：`dsh 0.2.0-rc.2` —— 最新版本在 `0.2.0-rc.2` 上开发与验证，`package.json` → `dsh.supported` 同步声明。DSH 与插件两侧版本不匹配时，设置页会给出排查诊断（检查 bundle 是否已选中 → 重启 `dsh web` → 硬刷新 → 同步升级）。
+> **运行时兼容性**：以 `package.json` 中的 `dsh.supported` 和 `dshCompatibility.testedRuntime` 为准。插件详情页会显示兼容性提醒。
 
 ![设置页预览](static/snapshot.webp)
 
@@ -14,16 +14,16 @@
 
 - **MCP 工具全量注入烧 token**：接入多个 MCP 服务器后工具可达上百个，每轮全量注入开销巨大。`search` 按需检索模式让模型通过 `mcp_tool_search` 热注入所需工具，大幅节省 token。
 - **工具列表反复更新破坏缓存**：`tools/list_changed` 通知会让同名工具被反复注销/重注册，系统提示词工具列表抖动、prompt cache 频繁失效。工具列表稳定化让未变化的工具保留原注册，最大化 cache 命中。
-- **没有可视化管理入口**：服务器配置、启停、工具勾选全靠手工改文件。Settings → MCP 一站式可视化完成。
+- **没有可视化管理入口**：服务器配置、启停、工具勾选全靠手工改文件。在「插件 → dsh-mcp」详情中一站式完成。
 
 **功能优势：**
 
 - **可视化管理**：服务器列表 / 新建 / 编辑 / 删除 / 测试连接 / 启停 / 刷新，全 UI 操作
-- **进程级环境变量**：全局 KV 配置（默认展开、支持批量添加）；stdio 服务器的子进程直接注入，streamable-http 服务器的请求头 value 写 `变量名` 或 `${变量名}` 即可在连接时自动替换为配置值（如 `Authorization: Bearer ${TOKEN}`）；同名时服务器自身 env 优先
+- **进程级环境变量**：全局 KV 配置（默认折叠、需要时展开）；stdio 服务器的子进程直接注入，streamable-http 服务器的请求头 value 写 `变量名` 或 `${变量名}` 即可在连接时自动替换为配置值（如 `Authorization: Bearer ${TOKEN}`）；同名时服务器自身 env 优先
 - **JSON 全量配置**：「JSON 维护配置」面板以一段 JSON 数组查看/编辑全部服务器配置，应用即保存（新增/更新/删除）
 - **工具级精细控制**：每个服务器展开工具列表，默认全选，可取消勾选只加载需要的部分
 - **图片结果透传**：MCP 工具返回的图片（截图/图表等）经附件服务投影为图片引用进入模型上下文，带严格预检与有界降级文案（PR #4）
-- **双注入模式**：`search`（按需检索，省 token）与 `full`（全量注入）
+- **双注入模式**：`search`（按需检索，支持中文关键词、意图词映射；按 Session 独立保留最多 8 个近期工具，最多缓存 48 个 Session）与 `full`（全量注入）。无有效匹配时不随机注入工具。
 - **零 npm 依赖**：直接对接 DeepSeek Harness 内部能力，安装即用
 - **OAuth 认证支持**：`streamable-http` 服务器若走 MCP OAuth（授权码 + PKCE），服务器卡片点「OAuth 授权」按钮，**由宿主打开系统浏览器**完成授权，本页每 5 秒轮询授权状态；token 与 client 信息持久化、由 SDK 自动刷新（24 小时内活跃自动续期），失效后重新授权。**授权完成前只显示「授权中」，授权失败会写明原因**
 - **HTTPS 默认按系统证书校验**：内网/公司 CA（只装在系统钥匙串里的根证书）无需再给 `dsh web` 加 `NODE_OPTIONS=--use-system-ca`，插件启动时把系统信任库并入 Node 默认根证书库
@@ -34,7 +34,7 @@
 - **托管 MCP 服务器注册表**（host）：持久化定义（storage-domain `mcp_servers`）、按服务器挂载
   `@deepseek-ai/dsh-mcp-client` 实例、环境变量注入（明文入定义、secret 走 credentials）、
   连接探测（test）。
-- **Web 设置管理页**（client）：Settings → MCP，列表/编辑/删除/测试服务器。
+- **插件详情管理页**（client）：插件 → dsh-mcp，列表/编辑/删除/测试服务器。
 - **OAuth 认证**（host，`lib/oauth.js`）：`streamable-http` 服务器遇 401 + OAuth 挑战时走
   授权码 + PKCE 流程，回环回调收码、token 持久化并按需自动刷新；设置页提供「OAuth 授权」按钮
   （Remote `oauthStart`，浏览器由宿主用系统浏览器打开）与每 5 秒一次的 `oauthStatus` 轮询

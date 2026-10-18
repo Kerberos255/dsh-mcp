@@ -1,8 +1,8 @@
 # dsh-mcp — MCP management UI + tool search: stable tool list, cache hits, no context bloat
 
-[![dshfind](https://dshfind.com/api/badge/ArvinQi/dsh-mcp?lang=en)](https://dshfind.com/en/plugins/ArvinQi/dsh-mcp?ref=badge)
+> This repository is a fork of <https://github.com/ArvinQi/dsh-mcp>. The upstream MIT license and attribution are retained. This fork maintains the plugin-detail UI, Chinese tool discovery, per-Session on-demand injection, and persistent per-tool controls.
 
-> **Supported DSH version**: `dsh 0.2.0-rc.2` — the latest release is developed and verified on `0.2.0-rc.2`, declared in `package.json` → `dsh.supported`. When the DSH and plugin versions do not match, the Settings page shows a diagnosis (check whether the bundle is selected → restart `dsh web` → hard-refresh → upgrade both sides).
+> **Runtime compatibility**: see `dsh.supported` and `dshCompatibility.testedRuntime` in `package.json`. The plugin details page reports compatibility warnings.
 
 ![Settings preview](static/snapshot.en.webp)
 
@@ -12,7 +12,7 @@
 
 - **Full tool injection burns tokens**: with multiple MCP servers, the tool count can reach hundreds, and injecting all of them every request is expensive. The `search` mode lets the model hot-inject only the tools it needs via `mcp_tool_search`, saving tokens at scale.
 - **Re-syncs churn the tool list and break caches**: `tools/list_changed` notifications dispose and re-register same-named tools, jittering the system-prompt tool list and constantly invalidating the prompt cache. Tool-list stabilization keeps unchanged tools registered, maximizing cache hits.
-- **No visual management entry**: server config, enable/disable, and tool toggles used to require editing files by hand. Settings → MCP brings everything into one UI.
+- **No visual management entry**: server config, enable/disable, and tool toggles used to require editing files by hand. Plugins → dsh-mcp opens its dedicated configuration panel.
 
 **Highlights:**
 
@@ -21,7 +21,7 @@
 - **Whole-list JSON config**: the "JSON config editor" panel views/edits every server as one JSON array; applying saves immediately (create/update/delete)
 - **Fine-grained tool control**: expand each server to see its tools, all checked by default; uncheck to load only what you need
 - **Image result passthrough**: images returned by MCP tools (screenshots/charts) are projected through the attachment service into model image context, with strict preflight and bounded fallbacks (PR #4)
-- **Two injection modes**: `search` (on-demand, token-saving) and `full` (inject everything)
+- **Two injection modes**: `search` (on-demand, Chinese phrase + intent matching; at most 8 recently discovered tools per Session, with bounded state for 48 Sessions) and `full` (inject everything). Queries with no matching tool never inject unrelated tools.
 - **Zero npm dependencies**: plugs into DeepSeek Harness internals, install and go
 - **OAuth authentication**: for `streamable-http` servers using MCP OAuth (authorization-code + PKCE), the server card has an **Authorize** button and the **Host opens the system browser** for the login; the page then polls the authorization status every 5 seconds. Tokens and OAuth client info are persisted and refreshed automatically by the SDK (auto-renewed while active within 24h), with re-authorization after expiry. **Before you authorize it only says "authorizing"; a real failure reports its reason**
 - **HTTPS verified against the system trust store by default**: intranet/corporate CAs (roots installed in the OS keychain) no longer need `NODE_OPTIONS=--use-system-ca` on `dsh web`; the plugin merges the OS store into Node's default root store at startup
